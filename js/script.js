@@ -1,102 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-const audio1 = document.getElementById("audio1");
-const audio2 = document.getElementById("audio2");
-const audio3 = document.getElementById("audio3");
-const audio4 = document.getElementById("audio4");
-
-const AUDIO_PATHS = {
-audio1: [
-"assets/audio/audio1.mp3",
-"assets/audio/audio%201.mp3",
-"audio 1.mp3"
-],
-audio2: [
-"assets/audio/audio2.mp3",
-"assets/audio/audio%202.mp3",
-"audio 2.mp3"
-],
-audio3: [
-"assets/audio/audio3.mp3",
-"assets/audio/audio%203.mp3",
-"audio 3.mp3"
-],
-audio4: [
-"assets/audio/audio4.mp3",
-"assets/audio/audio%204.mp3",
-"audio 4.mp3"
-]
-};
-
-let audioUnlocked = false;
-
-function unlockAudio() {
-audioUnlocked = true;
-}
-
-function playSound(audio, key) {
-
-if (!audio || !audioUnlocked) {
-return;
-}
-
-const paths = AUDIO_PATHS[key] || [];
-let index = 0;
-
-function attemptPlay() {
-
-if (index >= paths.length) {
-return;
-}
-
-try {
-
-audio.pause();
-audio.currentTime = 0;
-audio.src = paths[index];
-audio.load();
-
-const promise = audio.play();
-
-if (promise) {
-
-promise.catch(() => {
-index++;
-attemptPlay();
-});
-
-}
-
-} catch (_) {
-
-index++;
-attemptPlay();
-
-}
-
-}
-
-attemptPlay();
-
-}
-
-document.addEventListener(
-"pointerdown",
-unlockAudio,
-{
-once: true,
-capture: true
-}
-);
-
-document.addEventListener(
-"keydown",
-unlockAudio,
-{
-once: true,
-capture: true
-}
-);
-
 
 /* =========================================================
    CURSOR LIGHT
@@ -173,12 +75,7 @@ animateCursor();
 
 
 /* =========================================================
-   SMOOTH NORMAL PAGE SCROLL
-   - Mouse wheel / trackpad uses normal browser scrolling
-   - Small scrolls do not force the next section
-   - Tall sections such as SCHEDULE can be scrolled naturally
-   - Navbar / in-page anchors use smooth scrolling
-   - Event loading transition remains available later
+   NORMAL PAGE SCROLL
 ========================================================= */
 
 const pageTransition =
@@ -186,6 +83,7 @@ document.getElementById("pageTransition");
 
 const eventModal =
 document.getElementById("eventModal");
+
 
 function isEventModalOpen() {
 
@@ -195,6 +93,7 @@ eventModal.classList.contains("active")
 );
 
 }
+
 
 function scrollToSection(
 index,
@@ -222,13 +121,6 @@ return false;
 }
 
 if (playNavigationSound) {
-
-unlockAudio();
-
-playSound(
-audio4,
-"audio4"
-);
 
 }
 
@@ -318,11 +210,6 @@ true
 true
 );
 
-
-/*
-   Keep the existing pageTransition available for the event
-   opening/loading effect later in this file.
-*/
 
 if (pageTransition) {
 
@@ -456,7 +343,7 @@ updateCountdown,
 
 
 /* =========================================================
-   INTERACTIVE AUDIO 1
+   INTERACTIVE HOVER
 ========================================================= */
 
 const interactiveSelector = [
@@ -488,11 +375,6 @@ return;
 }
 
 lastInteractive = item;
-
-playSound(
-audio1,
-"audio1"
-);
 
 },
 {
@@ -555,7 +437,7 @@ container.style.position =
 "absolute";
 
 container.style.inset =
-"-60px";
+"-42px";
 
 container.style.overflow =
 "visible";
@@ -578,30 +460,112 @@ document.createElement(
 "span"
 );
 
-const angle =
-Math.random() *
-Math.PI *
-2;
+const side =
+Math.floor(
+Math.random() * 4
+);
+
+const edgePosition =
+8 +
+Math.random() * 84;
 
 const distance =
-60 +
-Math.random() *
-230;
-
-const startScale =
-0.4 +
-Math.random() *
-0.5;
-
-const endScale =
-1 +
-Math.random() *
-0.9;
+55 +
+Math.random() * 125;
 
 const size =
-3 +
-Math.random() *
-4;
+3.5 +
+Math.random() * 3.5;
+
+
+let startX =
+edgePosition;
+
+let startY =
+edgePosition;
+
+let moveX =
+0;
+
+let moveY =
+0;
+
+
+/* TOP */
+
+if (side === 0) {
+
+startX =
+edgePosition;
+
+startY =
+0;
+
+moveX =
+(Math.random() - 0.5) * 70;
+
+moveY =
+-distance;
+
+}
+
+
+/* RIGHT */
+
+else if (side === 1) {
+
+startX =
+100;
+
+startY =
+edgePosition;
+
+moveX =
+distance;
+
+moveY =
+(Math.random() - 0.5) * 70;
+
+}
+
+
+/* BOTTOM */
+
+else if (side === 2) {
+
+startX =
+edgePosition;
+
+startY =
+100;
+
+moveX =
+(Math.random() - 0.5) * 70;
+
+moveY =
+distance;
+
+}
+
+
+/* LEFT */
+
+else {
+
+startX =
+0;
+
+startY =
+edgePosition;
+
+moveX =
+-distance;
+
+moveY =
+(Math.random() - 0.5) * 70;
+
+}
+
 
 particle.className =
 "dust";
@@ -610,10 +574,10 @@ particle.style.position =
 "absolute";
 
 particle.style.left =
-"50%";
+`${startX}%`;
 
 particle.style.top =
-"50%";
+`${startY}%`;
 
 particle.style.width =
 `${size}px`;
@@ -647,71 +611,53 @@ particle.style.boxShadow =
 "0 0 16px #f6d77b," +
 "0 0 28px rgba(246,219,132,.95)";
 
+
 container.appendChild(
 particle
 );
 
-const x =
-Math.cos(angle) *
-distance;
-
-const y =
-Math.sin(angle) *
-distance;
 
 particle.animate(
 [
 {
-opacity: 0,
+opacity:0,
 transform:
-`translate3d(
-0,
-0,
-0
-)
-scale(${startScale})`
+"translate3d(0,0,0) scale(.25)"
 },
 
 {
-opacity: 1,
+opacity:1,
 transform:
-`translate3d(
-0,
-0,
-0
-)
-scale(1)`
+"translate3d(0,0,0) scale(1)"
 },
 
 {
-opacity: 1,
+opacity:1,
 transform:
 `translate3d(
-${x * 0.45}px,
-${y * 0.45}px,
+${moveX * 0.45}px,
+${moveY * 0.45}px,
 0
-)
-scale(${endScale})`
+) scale(1.15)`
 },
 
 {
-opacity: 0,
+opacity:0,
 transform:
 `translate3d(
-${x}px,
-${y}px,
+${moveX}px,
+${moveY}px,
 0
-)
-scale(${endScale + 0.4})`
+) scale(1.45)`
 }
 ],
 {
 duration:
-1150 +
-Math.random() * 250,
+1250 +
+Math.random() * 450,
 
 delay:
-Math.random() * 180,
+Math.random() * 120,
 
 easing:
 "cubic-bezier(.15,.8,.2,1)",
@@ -723,11 +669,16 @@ fill:
 
 }
 
-setTimeout(() => {
 
-container.innerHTML = "";
+setTimeout(
+() => {
 
-}, 1600);
+container.innerHTML =
+"";
+
+},
+1900
+);
 
 }
 
@@ -759,7 +710,7 @@ title:
 "PAPER FORGE",
 
 text:
-"A gathering of ideas, research and innovation. Present your work and forge your path to victory.",
+"The Scribe's Path",
 
 images: [
 "assets/images/events/paper-forge-1.png",
@@ -773,10 +724,10 @@ house:
 "HOUSE STARK",
 
 title:
-"THE ORACLE",
+"HERMES CODE",
 
 text:
-"Event details will be revealed.",
+"Tech Heist",
 
 images: [
 "assets/images/events/stark-1.png",
@@ -793,7 +744,7 @@ title:
 "SOLIDUS GAMBIT",
 
 text:
-"Event details will be revealed.",
+"CryptoQuest",
 
 images: [
 "assets/images/events/targaryen-1.png",
@@ -810,7 +761,7 @@ title:
 "CITADEL TRIALS",
 
 text:
-"Event details will be revealed.",
+"Mind Matrix",
 
 images: [
 "assets/images/events/lannister-1.png",
@@ -827,7 +778,7 @@ title:
 "RECORDS OF ASCLEPIOS",
 
 text:
-"Event details will be revealed.",
+"Diagnox",
 
 images: [
 "assets/images/events/baratheon-1.png",
@@ -843,17 +794,10 @@ images: [
    EVENT MODAL
 ========================================================= */
 
-/*
-   IMPORTANT:
-   Screenshot showed that the gold frame was actually
-   the event-modal-card, not only the image.
-*/
-
 const eventModalCard =
 document.querySelector(
 ".event-modal-card"
 );
-
 
 const eventModalClose =
 document.getElementById(
@@ -899,10 +843,6 @@ return;
 }
 
 
-/* =====================================================
-   REMOVE OUTER CARD FRAME
-===================================================== */
-
 if (eventModalCard) {
 
 eventModalCard.style.setProperty(
@@ -932,16 +872,6 @@ eventModalCard.style.setProperty(
 }
 
 
-/* AUDIO */
-
-unlockAudio();
-
-playSound(
-audio2,
-"audio2"
-);
-
-
 if (eventModalHouse) {
 
 eventModalHouse.textContent =
@@ -966,15 +896,10 @@ data.text;
 }
 
 
-/* =====================================================
-   IMAGE
-===================================================== */
-
 if (eventModalGallery) {
 
 eventModalGallery.innerHTML =
 "";
-
 
 const image =
 document.createElement(
@@ -989,11 +914,6 @@ image.alt =
 
 image.loading =
 "eager";
-
-
-/*
-   PRESERVE ORIGINAL IMAGE RATIO
-*/
 
 image.style.display =
 "block";
@@ -1012,11 +932,6 @@ image.style.maxHeight =
 
 image.style.objectFit =
 "contain";
-
-
-/*
-   REMOVE ALL IMAGE FRAME
-*/
 
 image.style.setProperty(
 "border",
@@ -1054,19 +969,13 @@ image.style.setProperty(
 "important"
 );
 
-
 image.src =
 data.images[0];
-
 
 eventModalGallery.appendChild(
 image
 );
 
-
-/* =====================================================
-   IMAGE CONTROLS
-===================================================== */
 
 const controls =
 document.createElement(
@@ -1190,11 +1099,6 @@ data.images.length -
 
 showImage();
 
-playSound(
-audio1,
-"audio1"
-);
-
 }
 );
 
@@ -1220,76 +1124,15 @@ current = 0;
 
 showImage();
 
-playSound(
-audio1,
-"audio1"
-);
-
 }
 );
 
 }
 
 
-/* =====================================================
-   EVENT LOADING TRANSITION
-===================================================== */
-
-if (pageTransition) {
-
-pageTransition.classList.remove(
-"transition-out"
-);
-
-pageTransition.classList.remove(
-"active"
-);
-
-void pageTransition.offsetWidth;
-
-pageTransition.classList.add(
-"active"
-);
-
-pageTransition.style.setProperty(
-"opacity",
-"1",
-"important"
-);
-
-pageTransition.style.setProperty(
-"visibility",
-"visible",
-"important"
-);
-
-pageTransition.style.setProperty(
-"pointer-events",
-"all",
-"important"
-);
-
-pageTransition.style.setProperty(
-"transform",
-"translateY(0)",
-"important"
-);
-
-}
-
-
-/* EXACT 2 SECOND EVENT LOADING */
-
-setTimeout(() => {
-
-if (audio2) {
-
-audio2.pause();
-
-audio2.currentTime =
-0;
-
-}
+/* =========================================================
+   OPEN EVENT IMMEDIATELY
+========================================================= */
 
 eventModal.classList.add(
 "active"
@@ -1300,72 +1143,14 @@ eventModal.setAttribute(
 "false"
 );
 
-}, 2000);
-
-
-/* MAGIC DUST + AUDIO 3 */
-
-setTimeout(() => {
+requestAnimationFrame(() => {
 
 createMagicDust(
 eventMagic,
-100
+125
 );
 
-playSound(
-audio3,
-"audio3"
-);
-
-}, 2050);
-
-
-/* CLOSE MEDARZT LOADING */
-
-setTimeout(() => {
-
-if (pageTransition) {
-
-pageTransition.classList.remove(
-"active"
-);
-
-pageTransition.classList.remove(
-"transition-out"
-);
-
-pageTransition.style.setProperty(
-"opacity",
-"0",
-"important"
-);
-
-pageTransition.style.setProperty(
-"visibility",
-"hidden",
-"important"
-);
-
-pageTransition.style.setProperty(
-"pointer-events",
-"none",
-"important"
-);
-
-pageTransition.style.setProperty(
-"transform",
-"translateY(100%)",
-"important"
-);
-
-pageTransition.setAttribute(
-"aria-hidden",
-"true"
-);
-
-}
-
-}, 2000);
+});
 
 }
 
@@ -1446,11 +1231,6 @@ eventMagic
 );
 
 
-/*
-   Keep the event modal card
-   visually clean after closing too.
-*/
-
 if (eventModalCard) {
 
 eventModalCard.style.setProperty(
@@ -1482,13 +1262,6 @@ eventModalClose.addEventListener(
 "click",
 () => {
 
-unlockAudio();
-
-playSound(
-audio1,
-"audio1"
-);
-
 closeEvent();
 
 }
@@ -1501,7 +1274,6 @@ const eventBackdrop =
 document.querySelector(
 ".event-modal-backdrop"
 );
-
 
 if (eventBackdrop) {
 
@@ -1611,14 +1383,6 @@ question.addEventListener(
 "click",
 () => {
 
-unlockAudio();
-
-playSound(
-audio4,
-"audio4"
-);
-
-
 const id =
 Number(
 question.dataset.faq
@@ -1657,16 +1421,9 @@ faqAnswer.classList.remove(
 }
 
 
-setTimeout(
-() => {
-
 createMagicDust(
 faqMagic,
-75
-);
-
-},
-30
+100
 );
 
 
@@ -1716,7 +1473,6 @@ faqAnswer.classList.add(
 
 /* =========================================================
    COORDINATOR IMAGE FALLBACKS
-   Temporary portrait image until the real Canva files are added.
 ========================================================= */
 
 function coordinatorFallback(label) {
@@ -1739,7 +1495,9 @@ const svg = `
 <text x="250" y="748" fill="#a7a198" font-family="serif" font-size="15" text-anchor="middle" letter-spacing="2">${label}</text>
 </svg>`;
 
-return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+return "data:image/svg+xml;charset=UTF-8," +
+encodeURIComponent(svg);
+
 }
 
 
@@ -1747,39 +1505,44 @@ function prepareCoordinatorImages() {
 
 const tracks = [
 
-    [
-        document.getElementById("staffTrack"),
-        "STAFF COORDINATOR"
-    ],
+[
+document.getElementById("staffTrack"),
+"STAFF COORDINATOR"
+],
 
-    [
-        document.getElementById("studentsTrack"),
-        "STUDENT COORDINATOR"
-    ]
+[
+document.getElementById("studentsTrack"),
+"STUDENT COORDINATOR"
+]
 
 ];
 
-tracks.forEach(([track, prefix]) => {
+tracks.forEach(
+([track, prefix]) => {
 
-    if (!track) {
-        return;
-    }
+if (!track) {
+return;
+}
 
-    track.querySelectorAll("img").forEach((img, index) => {
+track.querySelectorAll("img").forEach(
+(img, index) => {
 
-        img.onerror = () => {
+img.onerror = () => {
 
-            img.onerror = null;
+img.onerror = null;
 
-            img.src = coordinatorFallback(
-                `${prefix} ${index + 1}`
-            );
+img.src =
+coordinatorFallback(
+`${prefix} ${index + 1}`
+);
 
-        };
+};
 
-    });
+}
+);
 
-});
+}
+);
 
 }
 
@@ -1789,9 +1552,6 @@ prepareCoordinatorImages();
 
 /* =========================================================
    COORDINATOR SLIDER
-   - PREV / NEXT buttons
-   - AUTO SLIDE EVERY 3 SECONDS
-   - Manual click resets the 3-second timer
 ========================================================= */
 
 function setupCoordinatorSlider(
@@ -1818,10 +1578,6 @@ track.querySelectorAll(
 );
 
 
-/* -----------------------------------------
-   MAKE EACH SLIDE FULL WIDTH
------------------------------------------ */
-
 slides.forEach(
 slide => {
 
@@ -1839,17 +1595,12 @@ let current = 0;
 let autoSlideTimer = null;
 
 
-/* -----------------------------------------
-   UPDATE SLIDE
------------------------------------------ */
-
 function update() {
 
 track.style.transform =
 `translateX(-${
 current * 100
 }%)`;
-
 
 if (counter) {
 
@@ -1865,11 +1616,6 @@ totalSlides
 }
 
 
-/* -----------------------------------------
-   START AUTO SLIDE
-   EVERY 3 SECONDS
------------------------------------------ */
-
 function startAutoSlide() {
 
 if (
@@ -1878,9 +1624,6 @@ totalSlides <= 1
 return;
 }
 
-
-/* Prevent duplicate timers */
-
 if (autoSlideTimer) {
 
 clearInterval(
@@ -1888,7 +1631,6 @@ autoSlideTimer
 );
 
 }
-
 
 autoSlideTimer =
 setInterval(
@@ -1913,10 +1655,6 @@ update();
 }
 
 
-/* -----------------------------------------
-   STOP AUTO SLIDE
------------------------------------------ */
-
 function stopAutoSlide() {
 
 if (!autoSlideTimer) {
@@ -1932,12 +1670,6 @@ autoSlideTimer = null;
 }
 
 
-/* -----------------------------------------
-   RESET TIMER
-   Manual PREV / NEXT click pannumbothu
-   timer again 3 seconds-la start aagum
------------------------------------------ */
-
 function resetAutoSlide() {
 
 stopAutoSlide();
@@ -1946,10 +1678,6 @@ startAutoSlide();
 
 }
 
-
-/* -----------------------------------------
-   PREVIOUS
------------------------------------------ */
 
 if (prevButton) {
 
@@ -1971,13 +1699,6 @@ totalSlides -
 
 update();
 
-playSound(
-audio1,
-"audio1"
-);
-
-/* Restart 3-second timer */
-
 resetAutoSlide();
 
 }
@@ -1985,10 +1706,6 @@ resetAutoSlide();
 
 }
 
-
-/* -----------------------------------------
-   NEXT
------------------------------------------ */
 
 if (nextButton) {
 
@@ -2008,13 +1725,6 @@ current = 0;
 
 update();
 
-playSound(
-audio1,
-"audio1"
-);
-
-/* Restart 3-second timer */
-
 resetAutoSlide();
 
 }
@@ -2023,23 +1733,10 @@ resetAutoSlide();
 }
 
 
-/* -----------------------------------------
-   INITIAL STATE
------------------------------------------ */
-
 update();
-
-
-/* -----------------------------------------
-   START AUTO PLAY
------------------------------------------ */
 
 startAutoSlide();
 
-
-/* -----------------------------------------
-   RETURN CONTROLS
------------------------------------------ */
 
 return {
 
@@ -2048,8 +1745,6 @@ reset() {
 current = 0;
 
 update();
-
-/* Restart timer from beginning */
 
 resetAutoSlide();
 
@@ -2106,7 +1801,7 @@ document.getElementById(
 const studentSlideCount =
 studentsTrackElement
 ? studentsTrackElement.querySelectorAll(
-    ".coordinator-slide"
+".coordinator-slide"
 ).length
 : 0;
 
@@ -2136,12 +1831,10 @@ document.querySelectorAll(
 ".coordinator-tabs button"
 );
 
-
 const staffGroup =
 document.getElementById(
 "staffGroup"
 );
-
 
 const studentsGroup =
 document.getElementById(
@@ -2160,10 +1853,6 @@ const group =
 button.dataset.group;
 
 
-/* -----------------------------------------
-   ACTIVE TAB
------------------------------------------ */
-
 coordinatorTabs.forEach(
 tab => {
 
@@ -2174,15 +1863,10 @@ tab.classList.remove(
 }
 );
 
-
 button.classList.add(
 "active"
 );
 
-
-/* -----------------------------------------
-   STAFF
------------------------------------------ */
 
 if (
 group === "staff"
@@ -2208,11 +1892,6 @@ staffSlider.reset();
 
 }
 
-
-/* -----------------------------------------
-   STUDENTS
------------------------------------------ */
-
 else {
 
 if (staffGroup) {
@@ -2234,12 +1913,6 @@ studentsGroup.classList.add(
 studentSlider.reset();
 
 }
-
-
-    playSound(
-        audio1,
-        "audio1"
-    );
 
 }
 );
