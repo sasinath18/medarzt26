@@ -715,7 +715,7 @@ text:
 images: [
 "assets/images/events/paper-forge-1.png",
 "assets/images/events/paper-forge-2.png",
-"assets/images/events/paper-forge-3.png"
+"assets/images/events/paper-forge-3.png",
 "assets/images/events/paper-forge-4.png"
 ]
 },
