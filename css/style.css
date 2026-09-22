@@ -5076,3 +5076,63 @@ img.event-active-image {
     border-bottom:
         0 !important;
 }
+
+/* =========================================================
+   MEDARZT'26 — REQUESTED EVENT THUMBNAILS + FAQ DUST FIX
+   Only requested elements are changed.
+========================================================= */
+
+.event-card {
+    padding: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+}
+
+.event-thumbnail {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 235px !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    border: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.event-card:last-child .event-thumbnail {
+    min-height: 235px !important;
+}
+
+.faq-answer-area {
+    overflow: visible !important;
+}
+
+#faqMagic.magic-particles {
+    position: absolute !important;
+    inset: -55px !important;
+    z-index: 50 !important;
+    overflow: visible !important;
+    pointer-events: none !important;
+}
+
+#faqMagic.magic-particles .dust {
+    opacity: 0 !important;
+    z-index: 60 !important;
+    pointer-events: none !important;
+}
+
+@media (max-width: 800px) {
+    .event-card {
+        min-height: 0 !important;
+    }
+
+    .event-thumbnail {
+        min-height: 160px !important;
+        height: 160px !important;
+    }
+
+    #faqMagic.magic-particles {
+        inset: -45px !important;
+    }
+}
